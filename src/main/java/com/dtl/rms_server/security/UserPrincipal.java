@@ -1,6 +1,7 @@
 package com.dtl.rms_server.security;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +15,10 @@ import lombok.Getter;
 @Builder
 public class UserPrincipal implements UserDetails {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private final Integer accountId;
 	private final String email;
 	@JsonIgnore
@@ -21,7 +26,7 @@ public class UserPrincipal implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return null;
+		return Collections.emptyList();
 	}
 
 	@Override

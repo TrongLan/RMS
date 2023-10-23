@@ -6,6 +6,10 @@ public class UserPrincipalAuthenticationToken
 		extends
 			AbstractAuthenticationToken {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private final UserPrincipal principal;
 
 	public UserPrincipalAuthenticationToken(UserPrincipal principal) {

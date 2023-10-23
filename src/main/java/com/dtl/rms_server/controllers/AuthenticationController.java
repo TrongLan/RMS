@@ -8,7 +8,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,25 +30,18 @@ public class AuthenticationController {
 	public ResponseEntity<Object> login(
 			@RequestBody LoginRequest loginRequest) {
 
-		try {
-			Authentication authenticate = authenticationManager
-					.authenticate(new UsernamePasswordAuthenticationToken(
-							loginRequest.getUsername(),
-							loginRequest.getPassword(),
-							Collections.emptyList()));
-			SecurityContextHolder.getContext().setAuthentication(authenticate);
-			var principal = (UserPrincipal) authenticate.getPrincipal();
-			return new ResponseEntity<>(
-					LoginResponse.builder()
-							.accessToken(jwtGenerator.generate(
-									principal.getAccountId(),
-									principal.getEmail()))
-							.build(),
-					HttpStatus.OK);
-		} catch (Exception e) {
-			return new ResponseEntity<>(e.getMessage(),
-					HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		Authentication authenticate = authenticationManager
+				.authenticate(new UsernamePasswordAuthenticationToken(
+						loginRequest.getUsername(), loginRequest.getPassword(),
+						Collections.emptyList()));
+		SecurityContextHolder.getContext().setAuthentication(authenticate);
+		var principal = (UserPrincipal) authenticate.getPrincipal();
+		return new ResponseEntity<>(
+				LoginResponse.builder()
+						.accessToken(jwtGenerator.generate(
+								principal.getAccountId(), principal.getEmail()))
+						.build(),
+				HttpStatus.OK);
 
 	}
 }
