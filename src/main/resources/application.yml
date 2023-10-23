@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    password: Landt@0812
+    url: jdbc:mysql://localhost:3306/rms
+    username: root
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+security:
+  jwt:
+    secret-key: thisisasecretkeyofdinhtronglan
