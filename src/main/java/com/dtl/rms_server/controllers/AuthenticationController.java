@@ -18,6 +18,7 @@ import com.dtl.rms_server.dtos.LoginResponse;
 import com.dtl.rms_server.security.JWTGenerator;
 import com.dtl.rms_server.security.UserPrincipal;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -28,7 +29,7 @@ public class AuthenticationController {
 	private final AuthenticationManager authenticationManager;
 	@PostMapping("/login")
 	public ResponseEntity<Object> login(
-			@RequestBody LoginRequest loginRequest) {
+			@Valid @RequestBody LoginRequest loginRequest) {
 
 		Authentication authenticate = authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(

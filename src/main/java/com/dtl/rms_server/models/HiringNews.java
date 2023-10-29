@@ -1,8 +1,12 @@
 package com.dtl.rms_server.models;
 
+import java.sql.SQLType;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -29,6 +33,7 @@ import lombok.Setter;
 @Builder
 public class HiringNews {
 	@Id
+	@JdbcTypeCode(SqlTypes.VARCHAR)
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(columnDefinition = "VARCHAR(36)")
 	private UUID id;
@@ -37,14 +42,14 @@ public class HiringNews {
 	@Column(name = "due_date", nullable = false)
 	private LocalDate dueDate;
 	@Column(name = "quantity")
-	private int quatity;
+	private int quantity;
 	@Column(name = "salary_min")
 	private int salaryMin;
 	@Column(name = "salary_max")
 	private int salaryMax;
 	@Column(name = "description", length = 5000)
 	private String description;
-	@Column(name = "benifits", length = 5000)
+	@Column(name = "benefits", length = 5000)
 	private String benefits;
 	@Column(name = "requirements", length = 5000)
 	private String requirements;
