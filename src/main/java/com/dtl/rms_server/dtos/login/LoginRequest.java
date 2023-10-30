@@ -1,4 +1,4 @@
-package com.dtl.rms_server.dtos;
+package com.dtl.rms_server.dtos.login;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

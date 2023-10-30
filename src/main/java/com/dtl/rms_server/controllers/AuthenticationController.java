@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dtl.rms_server.dtos.LoginRequest;
-import com.dtl.rms_server.dtos.LoginResponse;
+import com.dtl.rms_server.dtos.login.LoginRequest;
+import com.dtl.rms_server.dtos.login.LoginResponse;
 import com.dtl.rms_server.security.JWTGenerator;
 import com.dtl.rms_server.security.UserPrincipal;
 

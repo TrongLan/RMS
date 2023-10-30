@@ -3,6 +3,9 @@ package com.dtl.rms_server.models;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,6 +16,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,8 +27,10 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "applicant_information")
+@Builder
 public class ApplicantInformation {
     @Id
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(columnDefinition = "varchar(36)")
     private UUID id;

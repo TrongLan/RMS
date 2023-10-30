@@ -1,6 +1,8 @@
 package com.dtl.rms_server.services.impl;
 
 import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,7 @@ public class HiringNewsServiceImpl implements HiringNewsService {
 	private final CategoryRepository categoryRepository;
 
 	@Override
-	public void uploadHiringNews(@Valid HiringNewsCreateDTO dto)
+	public String uploadHiringNews(HiringNewsCreateDTO dto)
 			throws RmsException {
 		HiringNews hiringNews = dto.toHiringNews();
 		Authentication authentication = SecurityContextHolder.getContext()
@@ -58,8 +60,8 @@ public class HiringNewsServiceImpl implements HiringNewsService {
 
 		hiringNews.setAccount(account);
 		hiringNews.setCategory(category);
-		hiringNewsRepository.save(hiringNews);
 		log.info("Hiring news is created by account id {} ", account.getId());
+		return hiringNewsRepository.save(hiringNews).getId().toString();
 	}
 
 }

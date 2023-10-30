@@ -1,4 +1,4 @@
-package com.dtl.rms_server.dtos;
+package com.dtl.rms_server.dtos.login;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
