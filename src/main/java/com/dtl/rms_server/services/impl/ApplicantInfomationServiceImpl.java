@@ -1,11 +1,14 @@
 package com.dtl.rms_server.services.impl;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.dtl.rms_server.constants.BasicInfo;
 import com.dtl.rms_server.constants.CustomRMSMessage;
@@ -35,10 +38,19 @@ public class ApplicantInfomationServiceImpl
 	private final HiringNewsRepository hiringNewsRepository;
 
 	@Override
-	public ApplicantInformation jobApply(ApplyInfoCreateDTO dto) throws RmsException {
+	public ApplicantInformation jobApply(ApplyInfoCreateDTO dto)
+			throws RmsException {
 		validate(dto);
+		UUID hiringNewsID;
+		try {
+			hiringNewsID = UUID.fromString(dto.getNewsId());
+		} catch (IllegalArgumentException e) {
+			log.error("This string '{}' is not a valid UUID.", dto.getNewsId());
+			throw new RmsException(
+					CustomRMSMessage.SOMETHING_WENT_WRONG.getContent());
+		}
 		Optional<HiringNews> newsOptional = hiringNewsRepository
-				.findById(UUID.fromString(dto.getNewsId()));
+				.findById(hiringNewsID);
 		if (newsOptional.isEmpty()) {
 			throw new RmsException(
 					CustomRMSMessage.HIRING_NEWS_NOT_EXIST.getContent());
@@ -65,6 +77,26 @@ public class ApplicantInfomationServiceImpl
 					.getMessage();
 			throw new RmsException(message);
 		}
+	}
+
+	@Override
+	public void updateApplyInfosStatus(List<String> uuids, int status) {
+		// validate
+		List<UUID> ids = new ArrayList();
+		try {
+			ids = uuids.stream().map(UUID::fromString).toList();
+		} catch (IllegalArgumentException e) {
+			log.error("Error in converting string to UUID");
+			throw new RmsException(
+					CustomRMSMessage.SOMETHING_WENT_WRONG.getContent());
+		}
+		List<ApplicantInformation> applyList = applicantInformationRepository
+				.findAllById(ids);
+		for (var apply : applyList) {
+			apply.setStatus(status);
+		}
+		applicantInformationRepository.saveAll(applyList);
+
 	}
 
 }

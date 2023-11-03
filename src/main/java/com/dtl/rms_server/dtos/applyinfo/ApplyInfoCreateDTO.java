@@ -30,14 +30,15 @@ public class ApplyInfoCreateDTO {
 	private String email;
 	@NotBlank(message = "'Phone number' is required.", groups = BasicInfo.class)
 	@Size(min = 10, max = 10, message = "'Phone number' is invalid.", groups = BasicInfo.class)
-	@Pattern(regexp = "//d+", message = "'Phone number' must contains digits only.", groups = BasicInfo.class)
+	@Pattern(regexp = "^[0-9]+$", message = "'Phone number' must contains digits only.", groups = BasicInfo.class)
 	private String phoneNumber;
 	private String cvURL;
+	@NotBlank(message = "'Hiring news id' is required.", groups = BasicInfo.class)
 	private String newsId;
 
 	public ApplicantInformation toApplicantInformation() {
 		return ApplicantInformation.builder().firstName(firstName)
 				.lastName(lastName).email(email).phoneNumber(phoneNumber)
-				.build();
+				.cvURL(cvURL).build();
 	}
 }

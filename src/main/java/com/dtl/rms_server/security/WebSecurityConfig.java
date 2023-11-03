@@ -34,7 +34,7 @@ public class WebSecurityConfig {
 						.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.formLogin(t -> t.disable()).securityMatcher("/**")
 				.authorizeHttpRequests(
-						t -> t.requestMatchers("/", "/auth/login", "/api/applicant").permitAll()
+						t -> t.requestMatchers("/", "/auth/login", "/api/apply").permitAll()
 								.anyRequest().authenticated());
 
 		return http.build();

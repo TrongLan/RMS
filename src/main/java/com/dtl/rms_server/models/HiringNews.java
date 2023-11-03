@@ -1,6 +1,5 @@
 package com.dtl.rms_server.models;
 
-import java.sql.SQLType;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
