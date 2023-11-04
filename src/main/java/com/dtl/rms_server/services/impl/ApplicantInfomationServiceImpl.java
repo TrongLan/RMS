@@ -1,14 +1,12 @@
 package com.dtl.rms_server.services.impl;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import com.dtl.rms_server.constants.BasicInfo;
 import com.dtl.rms_server.constants.CustomRMSMessage;
@@ -73,8 +71,9 @@ public class ApplicantInfomationServiceImpl
 		Set<ConstraintViolation<ApplyInfoCreateDTO>> constraintViolationSet = validator
 				.validate(dto, BasicInfo.class);
 		if (!constraintViolationSet.isEmpty()) {
-			String message = constraintViolationSet.stream().findFirst().get()
-					.getMessage();
+			Optional<ConstraintViolation<ApplyInfoCreateDTO>> findFirst = constraintViolationSet
+					.stream().findFirst();
+			String message = findFirst.get().getMessage();
 			throw new RmsException(message);
 		}
 	}
@@ -82,7 +81,7 @@ public class ApplicantInfomationServiceImpl
 	@Override
 	public void updateApplyInfosStatus(List<String> uuids, int status) {
 		// validate
-		List<UUID> ids = new ArrayList();
+		List<UUID> ids;
 		try {
 			ids = uuids.stream().map(UUID::fromString).toList();
 		} catch (IllegalArgumentException e) {

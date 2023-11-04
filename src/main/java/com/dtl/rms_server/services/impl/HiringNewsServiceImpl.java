@@ -1,7 +1,6 @@
 package com.dtl.rms_server.services.impl;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,7 +18,6 @@ import com.dtl.rms_server.repositories.HiringNewsRepository;
 import com.dtl.rms_server.security.UserPrincipal;
 import com.dtl.rms_server.services.HiringNewsService;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
