@@ -17,24 +17,24 @@ import lombok.Setter;
 @Getter
 @Setter
 public class HiringNewsCreateDTO {
-	@NotBlank(message = "'Title' is required.")
-	@Size(max = 200, message = "'Title' is no more than 200 characters.")
+	@NotBlank(message = "Tiêu đề không được để trống.")
+	@Size(max = 200, message = "Tiêu đề không dài quá 200 ký tự.")
 	private String title;
-	@NotNull(message = "'Due date' is required.")
+	@NotNull(message = "Hạn nộp hồ sơ không để trống.")
 	private LocalDate dueDate;
 	private int quantity;
 	private int salaryMin;
 	private int salaryMax;
-	@NotBlank(message = "'Description' is required.")
-	@Size(max = 5000, message = "'Description' is no more than 5000 characters.")
+	@NotBlank(message = "Mô tả công việc không để trống.")
+	@Size(max = 5000, message = "Mô tả công việc không dài quá 5000 ký tự.")
 	private String description;
-	@NotBlank(message = "'Benefits' is required.")
-	@Size(max = 5000, message = "'Benefits' is no more than 5000 characters.")
+	@NotBlank(message = "Chế độ đãi ngộ không được để trống.")
+	@Size(max = 5000, message = "Chế độ đãi ngộ không dài quá 5000 ký tự.")
 	private String benefits;
-	@NotBlank(message = "'Requirements' is required.")
-	@Size(max = 5000, message = "'Requirements' is no more than 5000 characters.")
+	@NotBlank(message = "Yêu cầu ứng viên không được để trống.")
+	@Size(max = 5000, message = "Yêu cầu ứng viên không dài quá 5000 ký tự.")
 	private String requirements;
-	@NotNull(message = "'Category' is required.")
+	@NotNull(message = "Không để trống danh mục tin.")
 	private Long categoryId;
 
 	public HiringNews toHiringNews() {

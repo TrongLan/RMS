@@ -6,7 +6,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum HiringNewsStatus {
-	ACTIVE(0), LOCKED(1);
+	ACTIVE(1), LOCKED(0);
 
 	private int value;
 }

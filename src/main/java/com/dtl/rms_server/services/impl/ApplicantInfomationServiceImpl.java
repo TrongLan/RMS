@@ -1,13 +1,15 @@
 package com.dtl.rms_server.services.impl;
 
 import java.time.LocalDateTime;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import com.dtl.rms_server.constants.ApplyInfoStatus;
 import com.dtl.rms_server.constants.BasicInfo;
 import com.dtl.rms_server.constants.CustomRMSMessage;
 import com.dtl.rms_server.constants.HiringNewsStatus;
@@ -68,18 +70,20 @@ public class ApplicantInfomationServiceImpl
 	private void validate(ApplyInfoCreateDTO dto) {
 		Validator validator = Validation.buildDefaultValidatorFactory()
 				.getValidator();
-		Set<ConstraintViolation<ApplyInfoCreateDTO>> constraintViolationSet = validator
-				.validate(dto, BasicInfo.class);
+		var constraintViolationSet = validator.validate(dto, BasicInfo.class);
 		if (!constraintViolationSet.isEmpty()) {
-			Optional<ConstraintViolation<ApplyInfoCreateDTO>> findFirst = constraintViolationSet
-					.stream().findFirst();
-			String message = findFirst.get().getMessage();
+			ConstraintViolation<ApplyInfoCreateDTO> constraintViolation = constraintViolationSet
+					.stream().findFirst().orElse(null);
+			String message = Objects.isNull(constraintViolation)
+					? ""
+					: constraintViolation.getMessage();
 			throw new RmsException(message);
 		}
 	}
 
 	@Override
-	public void updateApplyInfosStatus(List<String> uuids, int status) {
+	public void updateApplyInfosStatus(List<String> uuids, int status)
+			throws RmsException {
 		// validate
 		List<UUID> ids;
 		try {
@@ -96,6 +100,27 @@ public class ApplicantInfomationServiceImpl
 		}
 		applicantInformationRepository.saveAll(applyList);
 
+	}
+
+	@Override
+	public ApplicantInformation getDetails(String id) throws RmsException {
+		return applicantInformationRepository.findById(UUID.fromString(id))
+				.orElseThrow(() -> new RmsException(
+						CustomRMSMessage.APLLY_INFO_NOT_EXIST.getContent()));
+	}
+
+	@Override
+	public List<ApplicantInformation> getListApplyInfo(String newsId)
+			throws RmsException {
+		HiringNews hiringNews = hiringNewsRepository
+				.findById(UUID.fromString(newsId))
+				.orElseThrow(() -> new RmsException(
+						CustomRMSMessage.HIRING_NEWS_NOT_EXIST.getContent()));
+		return applicantInformationRepository
+				.findAllByHiringNewsAndStatusIn(hiringNews,
+						EnumSet.complementOf(EnumSet.of(ApplyInfoStatus.DENIED))
+								.stream().map(ApplyInfoStatus::getValue)
+								.toList());
 	}
 
 }

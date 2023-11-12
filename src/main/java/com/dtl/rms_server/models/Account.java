@@ -3,6 +3,7 @@ package com.dtl.rms_server.models;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,5 +37,6 @@ public class Account {
 	@Column(name = "is_active")
 	private int isActive;
 	@OneToMany(mappedBy = "account")
+	@JsonManagedReference
 	private List<HiringNews> news;
 }

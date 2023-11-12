@@ -9,5 +9,9 @@ import com.dtl.rms_server.models.ApplicantInformation;
 public interface ApplicantInformationService {
 
 	ApplicantInformation jobApply(ApplyInfoCreateDTO dto) throws RmsException;
-	void updateApplyInfosStatus(List<String> uuids, int status);
+	void updateApplyInfosStatus(List<String> uuids, int status)
+			throws RmsException;
+	ApplicantInformation getDetails(String id) throws RmsException;
+	List<ApplicantInformation> getListApplyInfo(String newsId)
+			throws RmsException;
 }

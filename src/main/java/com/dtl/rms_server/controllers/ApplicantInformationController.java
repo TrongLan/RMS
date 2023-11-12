@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -29,7 +30,7 @@ public class ApplicantInformationController {
 	private final ApplicantInformationService applicantInformationService;
 	private final FileStorageService fileStorageService;
 
-	@PostMapping(path = "/apply", produces = MediaType.APPLICATION_JSON_VALUE, consumes = {
+	@PostMapping(path = "/common/apply", produces = MediaType.APPLICATION_JSON_VALUE, consumes = {
 			"multipart/form-data"})
 	public ResponseEntity<Object> jobApply(@RequestParam ApplyInfoCreateDTO dto,
 			@RequestParam MultipartFile file) {
@@ -56,5 +57,18 @@ public class ApplicantInformationController {
 				status);
 		return new ResponseEntity<>(HttpStatus.ACCEPTED);
 
+	}
+
+	@GetMapping("/hr/apply-info/details/{id}")
+	public ResponseEntity<Object> getApplyInfoDetails(@PathVariable String id) {
+		return new ResponseEntity<>(applicantInformationService.getDetails(id),
+				HttpStatus.OK);
+	}
+
+	@GetMapping("/hr/apply-info/list/{id}")
+	public ResponseEntity<Object> getApplyInfoList(@PathVariable String id) {
+		return new ResponseEntity<>(
+				applicantInformationService.getListApplyInfo(id),
+				HttpStatus.OK);
 	}
 }

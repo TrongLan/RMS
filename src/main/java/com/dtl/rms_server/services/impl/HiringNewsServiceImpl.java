@@ -1,11 +1,14 @@
 package com.dtl.rms_server.services.impl;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.dtl.rms_server.constants.Common;
 import com.dtl.rms_server.constants.CustomRMSMessage;
 import com.dtl.rms_server.dtos.hiringnews.HiringNewsCreateDTO;
 import com.dtl.rms_server.exceptions.RmsException;
@@ -58,8 +61,33 @@ public class HiringNewsServiceImpl implements HiringNewsService {
 
 		hiringNews.setAccount(account);
 		hiringNews.setCategory(category);
+		hiringNews.setIsActive(Common.ACTIVE.getValue());
 		log.info("Hiring news is created by account id {} ", account.getId());
 		return hiringNewsRepository.save(hiringNews).getId().toString();
+	}
+
+	@Override
+	public HiringNews getHiringNewsDetails(String id) throws RmsException {
+		return hiringNewsRepository
+				.findByIdAndIsActive(UUID.fromString(id),
+						Common.ACTIVE.getValue())
+				.orElseThrow(() -> new RmsException(
+						CustomRMSMessage.HIRING_NEWS_NOT_EXIST.getContent()));
+	}
+
+	@Override
+	public List<HiringNews> getNewsOfCategory(long categoryId)
+			throws RmsException {
+		Category category = categoryRepository
+				.findById(Long.valueOf(categoryId))
+				.orElseThrow(() -> new RmsException(
+						CustomRMSMessage.CATEGORY_NOT_EXIST.getContent()));
+		if (category.getIsActive() == Common.LOCKED.getValue()) {
+			throw new RmsException(
+					CustomRMSMessage.CATEGORY_LOCKED.getContent());
+		}
+		return hiringNewsRepository.findAllByCategoryAndIsActive(category,
+				Common.ACTIVE.getValue());
 	}
 
 }
