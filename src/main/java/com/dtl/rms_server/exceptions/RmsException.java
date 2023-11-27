@@ -1,6 +1,9 @@
 package com.dtl.rms_server.exceptions;
 
+import org.springframework.http.HttpStatus;
+
 public class RmsException extends RuntimeException {
+	private HttpStatus httpStatusShouldReturn;
 
 	/**
 	 * 
@@ -11,8 +14,17 @@ public class RmsException extends RuntimeException {
 		super(message, cause);
 	}
 
+	public RmsException(String message, HttpStatus httpStatus) {
+		super(message);
+		this.httpStatusShouldReturn = httpStatus;
+	}
+
 	public RmsException(String message) {
 		super(message);
+	}
+
+	public HttpStatus getHttpStatusShouldReturn() {
+		return httpStatusShouldReturn;
 	}
 
 }

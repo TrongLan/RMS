@@ -14,12 +14,13 @@ public enum CustomRMSMessage {
 	ACCOUNT_NOT_EXIST("Tài khoản đã bị khóa hoặc không tồn tại."),
 
 	// Category
-	CATEGORY_NOT_EXIST("Danh mục tin không tồn tại."),
-	CATEGORY_LOCKED("Danh mục tin không hoạt động."),
+	CATEGORY_NOT_EXIST("Danh mục tin không tồn tại."), CATEGORY_LOCKED(
+			"Danh mục tin không hoạt động."),
 
 	// File
 	UPLOAD_DIR_INVALID("Lỗi đường dẫn thư mục lưu file."), FILE_NAME_INVALID(
-			"Tên file không hợp lệ"),
+			"Tên file không hợp lệ"), FILE_EXTENSION_INVALID(
+					"Chỉ chấp nhận file pdf, doc, docx và html."),
 
 	// Hiring news
 	HIRING_NEWS_NOT_EXIST("Tin tuyển dụng không tồn tại"), HIRING_NEWS_EXPIRED(

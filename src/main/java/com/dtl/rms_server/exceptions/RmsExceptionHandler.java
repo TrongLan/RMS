@@ -22,9 +22,10 @@ public class RmsExceptionHandler {
 
 	@ExceptionHandler(value = {RmsException.class})
 	public ResponseEntity<Object> handlingRmsException(RmsException e) {
-		return new ResponseEntity<>(new ExceptionResponse(e.getMessage(), e,
-				LocalDateTime.now(), HttpStatus.BAD_REQUEST),
-				HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(
+				new ExceptionResponse(e.getMessage(), e, LocalDateTime.now(),
+						e.getHttpStatusShouldReturn()),
+				e.getHttpStatusShouldReturn());
 	}
 
 	@ExceptionHandler(value = {MethodArgumentNotValidException.class})

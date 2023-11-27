@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -44,19 +45,22 @@ public class HiringNewsServiceImpl implements HiringNewsService {
 				.findByEmailIgnoreCaseAndIsActive(userEmail, 1);
 		if (accountOptional.isEmpty()) {
 			throw new RmsException(
-					CustomRMSMessage.ACCOUNT_NOT_EXIST.getContent());
+					CustomRMSMessage.ACCOUNT_NOT_EXIST.getContent(),
+					HttpStatus.BAD_REQUEST);
 		}
 		Account account = accountOptional.get();
 		Optional<Category> categoryOptional = categoryRepository
 				.findById(dto.getCategoryId());
 		if (categoryOptional.isEmpty()) {
 			throw new RmsException(
-					CustomRMSMessage.CATEGORY_NOT_EXIST.getContent());
+					CustomRMSMessage.CATEGORY_NOT_EXIST.getContent(),
+					HttpStatus.BAD_REQUEST);
 		}
 		Category category = categoryOptional.get();
 		if (category.getIsActive() == 0) {
 			throw new RmsException(
-					CustomRMSMessage.CATEGORY_NOT_EXIST.getContent());
+					CustomRMSMessage.CATEGORY_NOT_EXIST.getContent(),
+					HttpStatus.BAD_REQUEST);
 		}
 
 		hiringNews.setAccount(account);
@@ -72,7 +76,8 @@ public class HiringNewsServiceImpl implements HiringNewsService {
 				.findByIdAndIsActive(UUID.fromString(id),
 						Common.ACTIVE.getValue())
 				.orElseThrow(() -> new RmsException(
-						CustomRMSMessage.HIRING_NEWS_NOT_EXIST.getContent()));
+						CustomRMSMessage.HIRING_NEWS_NOT_EXIST.getContent(),
+						HttpStatus.NOT_FOUND));
 	}
 
 	@Override
@@ -81,13 +86,16 @@ public class HiringNewsServiceImpl implements HiringNewsService {
 		Category category = categoryRepository
 				.findById(Long.valueOf(categoryId))
 				.orElseThrow(() -> new RmsException(
-						CustomRMSMessage.CATEGORY_NOT_EXIST.getContent()));
+						CustomRMSMessage.CATEGORY_NOT_EXIST.getContent(),
+						HttpStatus.BAD_REQUEST));
 		if (category.getIsActive() == Common.LOCKED.getValue()) {
 			throw new RmsException(
-					CustomRMSMessage.CATEGORY_LOCKED.getContent());
+					CustomRMSMessage.CATEGORY_LOCKED.getContent(),
+					HttpStatus.BAD_REQUEST);
 		}
-		return hiringNewsRepository.findAllByCategoryAndIsActive(category,
-				Common.ACTIVE.getValue());
+		return hiringNewsRepository
+				.findAllByCategoryAndIsActiveOrderByDueDateDesc(category,
+						Common.ACTIVE.getValue());
 	}
 
 }

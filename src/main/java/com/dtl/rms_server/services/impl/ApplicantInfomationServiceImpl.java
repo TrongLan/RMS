@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.dtl.rms_server.constants.ApplyInfoStatus;
@@ -47,18 +48,21 @@ public class ApplicantInfomationServiceImpl
 		} catch (IllegalArgumentException e) {
 			log.error("This string '{}' is not a valid UUID.", dto.getNewsId());
 			throw new RmsException(
-					CustomRMSMessage.SOMETHING_WENT_WRONG.getContent());
+					CustomRMSMessage.SOMETHING_WENT_WRONG.getContent(),
+					HttpStatus.BAD_REQUEST);
 		}
 		Optional<HiringNews> newsOptional = hiringNewsRepository
 				.findById(hiringNewsID);
 		if (newsOptional.isEmpty()) {
 			throw new RmsException(
-					CustomRMSMessage.HIRING_NEWS_NOT_EXIST.getContent());
+					CustomRMSMessage.HIRING_NEWS_NOT_EXIST.getContent(),
+					HttpStatus.BAD_REQUEST);
 		}
 		HiringNews hiringNews = newsOptional.get();
 		if (hiringNews.getIsActive() == HiringNewsStatus.LOCKED.getValue()) {
 			throw new RmsException(
-					CustomRMSMessage.HIRING_NEWS_EXPIRED.getContent());
+					CustomRMSMessage.HIRING_NEWS_EXPIRED.getContent(),
+					HttpStatus.BAD_REQUEST);
 		}
 		ApplicantInformation applicantInformation = dto
 				.toApplicantInformation();
@@ -77,7 +81,7 @@ public class ApplicantInfomationServiceImpl
 			String message = Objects.isNull(constraintViolation)
 					? ""
 					: constraintViolation.getMessage();
-			throw new RmsException(message);
+			throw new RmsException(message, HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -91,7 +95,8 @@ public class ApplicantInfomationServiceImpl
 		} catch (IllegalArgumentException e) {
 			log.error("Error in converting string to UUID");
 			throw new RmsException(
-					CustomRMSMessage.SOMETHING_WENT_WRONG.getContent());
+					CustomRMSMessage.SOMETHING_WENT_WRONG.getContent(),
+					HttpStatus.BAD_REQUEST);
 		}
 		List<ApplicantInformation> applyList = applicantInformationRepository
 				.findAllById(ids);
@@ -106,7 +111,8 @@ public class ApplicantInfomationServiceImpl
 	public ApplicantInformation getDetails(String id) throws RmsException {
 		return applicantInformationRepository.findById(UUID.fromString(id))
 				.orElseThrow(() -> new RmsException(
-						CustomRMSMessage.APLLY_INFO_NOT_EXIST.getContent()));
+						CustomRMSMessage.APLLY_INFO_NOT_EXIST.getContent(),
+						HttpStatus.BAD_REQUEST));
 	}
 
 	@Override
@@ -115,7 +121,8 @@ public class ApplicantInfomationServiceImpl
 		HiringNews hiringNews = hiringNewsRepository
 				.findById(UUID.fromString(newsId))
 				.orElseThrow(() -> new RmsException(
-						CustomRMSMessage.HIRING_NEWS_NOT_EXIST.getContent()));
+						CustomRMSMessage.HIRING_NEWS_NOT_EXIST.getContent(),
+						HttpStatus.BAD_REQUEST));
 		return applicantInformationRepository
 				.findAllByHiringNewsAndStatusIn(hiringNews,
 						EnumSet.complementOf(EnumSet.of(ApplyInfoStatus.DENIED))

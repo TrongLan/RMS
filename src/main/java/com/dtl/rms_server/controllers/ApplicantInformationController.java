@@ -1,23 +1,29 @@
 package com.dtl.rms_server.controllers;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dtl.rms_server.dtos.applyinfo.ApplyInfoCreateDTO;
+import com.dtl.rms_server.dtos.applyinfo.FileInfoDTO;
 import com.dtl.rms_server.exceptions.ExceptionResponse;
 import com.dtl.rms_server.exceptions.RmsException;
+import com.dtl.rms_server.models.ApplicantInformation;
 import com.dtl.rms_server.services.ApplicantInformationService;
 import com.dtl.rms_server.services.FileStorageService;
 
@@ -49,13 +55,13 @@ public class ApplicantInformationController {
 
 	}
 
-	@PutMapping(path = "/hr/approve/{applyId}/{status}")
+	@GetMapping(path = "/hr/approve/{applyId}/{status}")
 	public ResponseEntity<Object> applyInfoApprove(
 			@PathVariable(required = true) String applyId,
 			@PathVariable(required = true) int status) {
 		applicantInformationService.updateApplyInfosStatus(List.of(applyId),
 				status);
-		return new ResponseEntity<>(HttpStatus.ACCEPTED);
+		return new ResponseEntity<>(HttpStatus.OK);
 
 	}
 
@@ -70,5 +76,28 @@ public class ApplicantInformationController {
 		return new ResponseEntity<>(
 				applicantInformationService.getListApplyInfo(id),
 				HttpStatus.OK);
+	}
+
+	@GetMapping("/hr/download/{id}")
+	public ResponseEntity<Object> downloadFile(@PathVariable String id) {
+		ApplicantInformation details = applicantInformationService
+				.getDetails(id);
+		try {
+
+			Path filePath = Paths.get(details.getCvURL()).toAbsolutePath()
+					.normalize();
+			Resource resource = new UrlResource(filePath.toUri());
+			var fileInfo = FileInfoDTO.builder().name(resource.getFilename())
+					.content(resource.getContentAsByteArray())
+					.size(resource.contentLength()).build();
+
+			if (resource.exists()) {
+				return ResponseEntity.ok().body(fileInfo);
+			} else {
+				throw new RuntimeException("File not found " + filePath);
+			}
+		} catch (IOException ex) {
+			throw new RuntimeException("File not found ", ex);
+		}
 	}
 }
