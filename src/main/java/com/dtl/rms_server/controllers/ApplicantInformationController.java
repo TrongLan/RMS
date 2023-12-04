@@ -101,4 +101,11 @@ public class ApplicantInformationController {
 			throw new RuntimeException("File not found ", ex);
 		}
 	}
+
+	@GetMapping("/hr/apply-dashboard/{id}")
+	public ResponseEntity<Object> getApplyDashboard(@PathVariable String id) {
+		return new ResponseEntity<>(
+				applicantInformationService.getApplyInfoDashboardForNews(id),
+				HttpStatus.OK);
+	}
 }

@@ -17,9 +17,11 @@ import org.springframework.stereotype.Service;
 
 import com.dtl.rms_server.constants.ApplyInfoStatus;
 import com.dtl.rms_server.constants.BasicInfo;
+import com.dtl.rms_server.constants.Common;
 import com.dtl.rms_server.constants.CustomRMSMessage;
 import com.dtl.rms_server.constants.HiringNewsStatus;
 import com.dtl.rms_server.dtos.applyinfo.ApplyInfoCreateDTO;
+import com.dtl.rms_server.dtos.applyinfo.ApplyInfoDashBoard;
 import com.dtl.rms_server.exceptions.RmsException;
 import com.dtl.rms_server.models.ApplicantInformation;
 import com.dtl.rms_server.models.HiringNews;
@@ -151,10 +153,32 @@ public class ApplicantInfomationServiceImpl
 		Pageable pageable = PageRequest.of(pageNumber, 10,
 				Sort.by(Order.asc("status"), Order.desc("applyDate")));
 		return applicantInformationRepository.findAllByHiringNewsAndStatusIn(
-				hiringNews,
-				EnumSet.complementOf(EnumSet.of(ApplyInfoStatus.DENIED))
-						.stream().map(ApplyInfoStatus::getValue).toList(),
+				hiringNews, ApplyInfoStatus.map().keySet().stream().toList(),
 				pageable);
+	}
+
+	@Override
+	public ApplyInfoDashBoard getApplyInfoDashboardForNews(String newsId)
+			throws RmsException {
+		HiringNews hiringNews = hiringNewsRepository
+				.findById(UUID.fromString(newsId))
+				.orElseThrow(() -> new RmsException(
+						CustomRMSMessage.HIRING_NEWS_NOT_EXIST.getContent(),
+						HttpStatus.BAD_REQUEST));
+		List<ApplicantInformation> applyInfos = applicantInformationRepository
+				.findAllByHiringNews(hiringNews);
+		long total = applyInfos.size();
+		long suitable = applyInfos.stream().filter(
+				t -> t.getStatus() == ApplyInfoStatus.APPROVED.getValue())
+				.count();
+		long notSuitable = applyInfos.stream()
+				.filter(t -> t.getStatus() == ApplyInfoStatus.DENIED.getValue())
+				.count();
+		long pending = applyInfos.stream()
+				.filter(t -> t.getStatus() == ApplyInfoStatus.UNSEEN.getValue())
+				.count();
+		return ApplyInfoDashBoard.builder().total(total).suitable(suitable)
+				.notSuitable(notSuitable).pending(pending).build();
 	}
 
 }
