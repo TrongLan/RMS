@@ -1,5 +1,6 @@
 package com.dtl.rms_server.services.impl;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -60,6 +61,12 @@ public class HiringNewsServiceImpl implements HiringNewsService {
 		if (category.getIsActive() == 0) {
 			throw new RmsException(
 					CustomRMSMessage.CATEGORY_NOT_EXIST.getContent(),
+					HttpStatus.BAD_REQUEST);
+		}
+
+		if (LocalDate.now().isAfter(dto.getDueDate())) {
+			throw new RmsException(
+					CustomRMSMessage.DUE_DATE_INVALID.getContent(),
 					HttpStatus.BAD_REQUEST);
 		}
 

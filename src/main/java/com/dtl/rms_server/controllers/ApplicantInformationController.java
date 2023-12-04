@@ -72,9 +72,10 @@ public class ApplicantInformationController {
 	}
 
 	@GetMapping("/hr/apply-info/list/{id}")
-	public ResponseEntity<Object> getApplyInfoList(@PathVariable String id) {
+	public ResponseEntity<Object> getApplyInfoList(@PathVariable String id,
+			@RequestParam(defaultValue = "0") int pageNumber) {
 		return new ResponseEntity<>(
-				applicantInformationService.getListApplyInfo(id),
+				applicantInformationService.getListApplyInfo(id, pageNumber),
 				HttpStatus.OK);
 	}
 

@@ -7,6 +7,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +46,7 @@ public class ApplicantInfomationServiceImpl
 	@Override
 	public ApplicantInformation jobApply(ApplyInfoCreateDTO dto)
 			throws RmsException {
-		validate(dto);
+		validateDefault(dto);
 		UUID hiringNewsID;
 		try {
 			hiringNewsID = UUID.fromString(dto.getNewsId());
@@ -64,6 +69,7 @@ public class ApplicantInfomationServiceImpl
 					CustomRMSMessage.HIRING_NEWS_EXPIRED.getContent(),
 					HttpStatus.BAD_REQUEST);
 		}
+		validateCustom(dto, hiringNews);
 		ApplicantInformation applicantInformation = dto
 				.toApplicantInformation();
 		applicantInformation.setHiringNews(hiringNews);
@@ -71,7 +77,7 @@ public class ApplicantInfomationServiceImpl
 		return applicantInformationRepository.save(applicantInformation);
 	}
 
-	private void validate(ApplyInfoCreateDTO dto) {
+	private void validateDefault(ApplyInfoCreateDTO dto) {
 		Validator validator = Validation.buildDefaultValidatorFactory()
 				.getValidator();
 		var constraintViolationSet = validator.validate(dto, BasicInfo.class);
@@ -82,6 +88,25 @@ public class ApplicantInfomationServiceImpl
 					? ""
 					: constraintViolation.getMessage();
 			throw new RmsException(message, HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	private void validateCustom(ApplyInfoCreateDTO dto, HiringNews hiringNews) {
+		List<ApplicantInformation> allByHiringNews = applicantInformationRepository
+				.findAllByHiringNews(hiringNews);
+		List<String> emails = allByHiringNews.stream()
+				.map(ApplicantInformation::getEmail).toList();
+		List<String> phoneNumbers = allByHiringNews.stream()
+				.map(ApplicantInformation::getPhoneNumber).toList();
+		if (emails.contains(dto.getEmail())) {
+			throw new RmsException(
+					CustomRMSMessage.EMAIL_APPLY_EXIST.getContent(),
+					HttpStatus.BAD_REQUEST);
+		}
+		if (phoneNumbers.contains(dto.getPhoneNumber())) {
+			throw new RmsException(
+					CustomRMSMessage.PHONE_NUMBER_APPLY_EXIST.getContent(),
+					HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -116,18 +141,20 @@ public class ApplicantInfomationServiceImpl
 	}
 
 	@Override
-	public List<ApplicantInformation> getListApplyInfo(String newsId)
-			throws RmsException {
+	public Page<ApplicantInformation> getListApplyInfo(String newsId,
+			int pageNumber) throws RmsException {
 		HiringNews hiringNews = hiringNewsRepository
 				.findById(UUID.fromString(newsId))
 				.orElseThrow(() -> new RmsException(
 						CustomRMSMessage.HIRING_NEWS_NOT_EXIST.getContent(),
 						HttpStatus.BAD_REQUEST));
-		return applicantInformationRepository
-				.findAllByHiringNewsAndStatusIn(hiringNews,
-						EnumSet.complementOf(EnumSet.of(ApplyInfoStatus.DENIED))
-								.stream().map(ApplyInfoStatus::getValue)
-								.toList());
+		Pageable pageable = PageRequest.of(pageNumber, 10,
+				Sort.by(Order.asc("status"), Order.desc("applyDate")));
+		return applicantInformationRepository.findAllByHiringNewsAndStatusIn(
+				hiringNews,
+				EnumSet.complementOf(EnumSet.of(ApplyInfoStatus.DENIED))
+						.stream().map(ApplyInfoStatus::getValue).toList(),
+				pageable);
 	}
 
 }

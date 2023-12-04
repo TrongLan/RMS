@@ -23,13 +23,16 @@ public enum CustomRMSMessage {
 					"Chỉ chấp nhận file pdf, doc, docx và html."),
 
 	// Hiring news
-	HIRING_NEWS_NOT_EXIST("Tin tuyển dụng không tồn tại"), HIRING_NEWS_EXPIRED(
-			"Tin tuyển dụng quá hạn"),
+	HIRING_NEWS_NOT_EXIST("Tin tuyển dụng không tồn tại."), HIRING_NEWS_EXPIRED(
+			"Tin tuyển dụng quá hạn"), DUE_DATE_INVALID(
+					"Ngày đến hạn không hợp lệ"),
 
 	// Apply Info
 	APPLY_INFO_WRONG_DATA_FORMAT(
-			"Lỗi định dạng dữ liệu thông tin ứng tuyển"), APLLY_INFO_NOT_EXIST(
-					"Thông tin ứng tuyển không tồn tại.");
+			"Lỗi định dạng dữ liệu thông tin ứng tuyển."), EMAIL_APPLY_EXIST(
+					"Email đã được sử dụng để ứng tuyển."), PHONE_NUMBER_APPLY_EXIST(
+							"Số điện thoại đã được sử dụng để ứng tuyển."), APLLY_INFO_NOT_EXIST(
+									"Thông tin ứng tuyển không tồn tại.");
 
 	private final String content;
 }
